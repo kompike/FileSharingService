@@ -5,6 +5,7 @@ import com.javaclasses.dao.tinytype.Email;
 import com.javaclasses.dao.tinytype.Password;
 import com.javaclasses.dao.tinytype.SecurityToken;
 import com.javaclasses.service.UserAuthenticationService;
+import com.javaclasses.service.UserNotFoundException;
 
 /**
  * Implementation of {@link UserAuthenticationService} interface
@@ -18,7 +19,9 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     }
 
     @Override
-    public SecurityToken login(Email email, Password password) {
+    public SecurityToken login(Email email, Password password)
+            throws UserNotFoundException {
+
         return null;
     }
 }

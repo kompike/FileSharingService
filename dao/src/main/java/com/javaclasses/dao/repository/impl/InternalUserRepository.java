@@ -2,6 +2,7 @@ package com.javaclasses.dao.repository.impl;
 
 import com.javaclasses.dao.entity.User;
 import com.javaclasses.dao.repository.UserRepository;
+import com.javaclasses.dao.tinytype.Email;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +13,7 @@ import java.util.Map;
 /**
  * Implementation of {@link UserRepository} interface for internal data
  */
-public class InternalUserRepository implements UserRepository{
+public class InternalUserRepository implements UserRepository {
 
     private final Logger log = LoggerFactory.getLogger(InternalUserRepository.class);
 
@@ -56,6 +57,12 @@ public class InternalUserRepository implements UserRepository{
         }
 
         return users.get(userId);
+    }
+
+    @Override
+    public User findUserByEmail(Email email) {
+
+        return null;
     }
 
     @Override

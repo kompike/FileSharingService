@@ -15,5 +15,6 @@ public interface UserAuthenticationService {
      * @param password Password of current user
      * @return Security token for logged user
      */
-    SecurityToken login(Email email, Password password);
+    SecurityToken login(Email email, Password password)
+            throws UserNotFoundException;
 }
