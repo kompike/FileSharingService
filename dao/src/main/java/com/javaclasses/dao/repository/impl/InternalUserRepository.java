@@ -16,9 +16,13 @@ public class InternalUserRepository implements UserRepository{
 
     private final Logger log = LoggerFactory.getLogger(InternalUserRepository.class);
 
-    private long idCounter = 1;
+    private long idCounter;
 
     private final Map<Long, User> users = new HashMap<>();
+
+    public InternalUserRepository() {
+        idCounter = users.size();
+    }
 
     @Override
     public void create(User user) {
