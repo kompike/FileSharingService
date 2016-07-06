@@ -11,6 +11,7 @@ import com.javaclasses.service.impl.UserRegistrationServiceImpl;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class UserRegistrationServiceShould {
 
@@ -25,12 +26,29 @@ public class UserRegistrationServiceShould {
         final User user = new User(new Email("test@test.com"), new Password("password"),
                 new FirstName("Test"), new LastName("Test"));
 
-        userRegistrationService.registerNewUser(user.getEmail(), user.getPassword(),
-                user.getFirstName(), user.getLastName());
+        userRegistrationService.registerNewUser(user);
 
-        final User userFromRepository = userRepository.findUserByEmail(user.getEmail());
+        final User userFromRepository = userRepository.findUserById(user.getId());
 
         assertEquals("Returned user does not equals registered.",
                 user, userFromRepository);
+    }
+
+    @Test
+    public void testAlreadyExistingUserRegistration() {
+
+        final User user = new User(new Email("test@test.com"), new Password("password"),
+                new FirstName("Test"), new LastName("Test"));
+
+        try {
+            userRegistrationService.registerNewUser(user);
+
+            userRegistrationService.registerNewUser(user);
+            fail("UserAlreadyExistsException was not thrown.");
+        } catch (UserAlreadyExistsException ex) {
+            assertEquals("Expected and actual emails must be equal.",
+                    user.getEmail(), ex.getEmail());
+        }
+
     }
 }

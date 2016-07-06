@@ -1,18 +1,19 @@
-group 'FileSharingService'
-version '1.0-SNAPSHOT'
+allprojects {
 
-apply plugin: 'java'
+    group 'FileSharingService'
+    version '1.0-SNAPSHOT'
 
-repositories {
-    mavenCentral()
-}
+    apply plugin: 'java'
 
-dependencies {
+    repositories {
+        mavenCentral()
+    }
 
-    compile 'org.slf4j:slf4j-api:1.7.21'
-    compile 'ch.qos.logback:logback-classic:1.1.7'
-    compile 'ch.qos.logback:logback-core:1.1.7'
-    compile 'com.google.guava:guava:19.0'
+    dependencies {
 
-    testCompile 'junit:junit:4.11'
+        compile 'org.slf4j:slf4j-api:1.7.21'
+        compile 'ch.qos.logback:logback-classic:1.1.7'
+        compile 'ch.qos.logback:logback-core:1.1.7'
+        compile 'com.google.guava:guava:19.0'
+    }
 }

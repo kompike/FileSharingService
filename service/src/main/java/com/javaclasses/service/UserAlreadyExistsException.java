@@ -13,4 +13,8 @@ public class UserAlreadyExistsException extends Exception {
         super(message + " : " + email.getEmail());
         this.email = email;
     }
+
+    public Email getEmail() {
+        return email;
+    }
 }
