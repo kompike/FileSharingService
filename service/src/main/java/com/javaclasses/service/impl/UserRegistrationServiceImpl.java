@@ -23,7 +23,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     public void registerNewUser(User user)
             throws UserAlreadyExistsException {
 
-        final Collection<User> users = userRepository.findAllUsers();
+        final Collection<User> users = userRepository.findAllRegisteredUsers();
 
         final Email userEmail = user.getEmail();
 

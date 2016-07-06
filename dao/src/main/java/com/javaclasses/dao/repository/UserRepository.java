@@ -2,6 +2,7 @@ package com.javaclasses.dao.repository;
 
 import com.javaclasses.dao.entity.User;
 import com.javaclasses.dao.tinytype.Email;
+import com.javaclasses.dao.tinytype.SecurityToken;
 
 import java.util.Collection;
 
@@ -34,5 +35,19 @@ public interface UserRepository {
      * Get all users from the database
      * @return Collection of all available users
      */
-    Collection<User> findAllUsers();
+    Collection<User> findAllRegisteredUsers();
+
+    /**
+     * Add logged user to the database
+     * @param token Unique security identifier of logged user
+     * @param user Logged user
+     */
+    void addLoggedUser(SecurityToken token, User user);
+
+    /**
+     * Search for user in database of logged users by security token
+     * @param token Unique security identifier of logged user
+     * @return User with given security token
+     */
+    User findLoggedUserBySecurityToken(SecurityToken token);
 }

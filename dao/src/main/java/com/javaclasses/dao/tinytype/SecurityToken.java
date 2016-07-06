@@ -30,4 +30,10 @@ public class SecurityToken {
     public int hashCode() {
         return (int) (getToken() ^ (getToken() >>> 32));
     }
+
+    @Override
+    public String toString() {
+
+        return String.valueOf(token);
+    }
 }

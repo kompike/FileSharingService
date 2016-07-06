@@ -30,4 +30,9 @@ public class Email {
     public int hashCode() {
         return getEmail().hashCode();
     }
+
+    @Override
+    public String toString() {
+        return email;
+    }
 }

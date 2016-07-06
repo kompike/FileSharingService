@@ -30,4 +30,9 @@ public class Password {
     public int hashCode() {
         return getPassword().hashCode();
     }
+
+    @Override
+    public String toString() {
+        return password;
+    }
 }

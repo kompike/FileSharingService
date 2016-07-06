@@ -2,7 +2,7 @@ package com.javaclasses.service;
 
 import com.javaclasses.dao.entity.User;
 import com.javaclasses.dao.repository.UserRepository;
-import com.javaclasses.dao.repository.impl.InternalUserRepository;
+import com.javaclasses.dao.repository.impl.InMemoryUserRepository;
 import com.javaclasses.dao.tinytype.Email;
 import com.javaclasses.dao.tinytype.FirstName;
 import com.javaclasses.dao.tinytype.LastName;
@@ -15,7 +15,7 @@ import static org.junit.Assert.fail;
 
 public class UserRegistrationServiceShould {
 
-    private final UserRepository userRepository = new InternalUserRepository();
+    private final UserRepository userRepository = new InMemoryUserRepository();
 
     private final UserRegistrationService userRegistrationService =
             new UserRegistrationServiceImpl(userRepository);

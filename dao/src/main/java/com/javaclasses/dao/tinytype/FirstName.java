@@ -30,4 +30,9 @@ public class FirstName {
     public int hashCode() {
         return getFirstName().hashCode();
     }
+
+    @Override
+    public String toString() {
+        return firstName;
+    }
 }
