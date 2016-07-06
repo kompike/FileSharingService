@@ -19,7 +19,7 @@ public class InMemoryUserRepository implements UserRepository {
 
     private long idCounter;
 
-    private final Map<Long, User> newUsers = new HashMap<Long, User>(){{
+    private final Map<Long, User> registeredUsers = new HashMap<Long, User>(){{
 
         put(0L, new User(new Email("email"),
                 new Password("password"), new FirstName("firstName"), new LastName("lastName")));
@@ -32,7 +32,7 @@ public class InMemoryUserRepository implements UserRepository {
     private final Map<SecurityToken, User> loggedUsers = new HashMap<>();
 
     public InMemoryUserRepository() {
-        idCounter = newUsers.size();
+        idCounter = registeredUsers.size();
     }
 
     @Override
@@ -48,10 +48,10 @@ public class InMemoryUserRepository implements UserRepository {
             log.info("New user id: " + user.getId());
         }
 
-        newUsers.put(idCounter++, user);
+        registeredUsers.put(idCounter++, user);
 
         if (log.isInfoEnabled()) {
-            log.info("Users map size is: " + newUsers.size());
+            log.info("Users map size is: " + registeredUsers.size());
         }
 
         if (log.isInfoEnabled()) {
@@ -66,7 +66,7 @@ public class InMemoryUserRepository implements UserRepository {
             log.info("Looking for user with id: " + userId);
         }
 
-        return newUsers.get(userId);
+        return registeredUsers.get(userId);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class InMemoryUserRepository implements UserRepository {
             log.info("Getting the list of all registered users.");
         }
 
-        return newUsers.values();
+        return registeredUsers.values();
     }
 
     @Override

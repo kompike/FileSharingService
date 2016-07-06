@@ -8,8 +8,6 @@ import com.javaclasses.dao.tinytype.SecurityToken;
 import com.javaclasses.service.UserAuthenticationService;
 import com.javaclasses.service.UserNotFoundException;
 
-import java.util.Random;
-
 /**
  * Implementation of {@link UserAuthenticationService} interface
  */
