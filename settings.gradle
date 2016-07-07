@@ -1,4 +1,3 @@
 rootProject.name = 'FileSharingService'
-include 'service'
-include 'dao'
+include 'service', 'dao'
 

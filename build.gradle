@@ -17,3 +17,14 @@ allprojects {
         compile 'com.google.guava:guava:19.0'
     }
 }
+
+project(':service'){
+
+    dependencies {
+
+        compile project(':dao')
+
+        testCompile 'junit:junit:4.11'
+    }
+
+}
