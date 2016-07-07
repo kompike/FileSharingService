@@ -3,6 +3,7 @@ package com.javaclasses.dao.repository;
 import com.javaclasses.dao.entity.File;
 import com.javaclasses.dao.entity.User;
 import com.javaclasses.dao.tinytype.FileId;
+import com.javaclasses.dao.tinytype.UserId;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,10 +31,10 @@ public interface FileRepository {
 
     /**
      * Looking for all files of given user
-     * @param user Current user
+     * @param userId Id of current user
      * @return List of all files of given user
      */
-    Collection<File> findAllUserFiles(User user);
+    Collection<File> findAllUserFiles(UserId userId);
 
     /**
      * Browse file content by file identifier

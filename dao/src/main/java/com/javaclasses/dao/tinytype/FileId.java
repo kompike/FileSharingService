@@ -11,7 +11,7 @@ public class FileId {
         this.fileId = fileId;
     }
 
-    public long getFileId() {
+    public long getId() {
         return fileId;
     }
 
@@ -22,13 +22,13 @@ public class FileId {
 
         FileId fileId1 = (FileId) o;
 
-        return getFileId() == fileId1.getFileId();
+        return getId() == fileId1.getId();
 
     }
 
     @Override
     public int hashCode() {
-        return (int) (getFileId() ^ (getFileId() >>> 32));
+        return (int) (getId() ^ (getId() >>> 32));
     }
 
     @Override

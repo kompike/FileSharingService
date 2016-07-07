@@ -5,6 +5,7 @@ import com.javaclasses.dao.entity.File;
 import com.javaclasses.dao.entity.User;
 import com.javaclasses.dao.repository.FileRepository;
 import com.javaclasses.dao.tinytype.FileId;
+import com.javaclasses.dao.tinytype.UserId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,7 @@ public class InMemoryFileRepository implements FileRepository {
 
     private final Map<Long, File> files = new ConcurrentHashMap<>();
 
-    private final Map<File, byte[]> filesContent = new ConcurrentHashMap<>();
+    private final Map<FileId, byte[]> filesContent = new ConcurrentHashMap<>();
 
     public InMemoryFileRepository() {
         fileIdCounter = files.size();
@@ -66,7 +67,7 @@ public class InMemoryFileRepository implements FileRepository {
             inputStream.close();
         }
 
-        filesContent.put(file, bytes);
+        filesContent.put(file.getFileId(), bytes);
 
         if (log.isInfoEnabled()) {
             log.info("File content successfully added to the storage.");
@@ -86,11 +87,11 @@ public class InMemoryFileRepository implements FileRepository {
             log.info("Looking for file with id: " + fileId);
         }
 
-        return files.get(fileId.getFileId());
+        return files.get(fileId.getId());
     }
 
     @Override
-    public Collection<File> findAllUserFiles(User user) {
+    public Collection<File> findAllUserFiles(UserId userId) {
 
         if (log.isInfoEnabled()) {
             log.info("Getting the list of all files in memory...");
@@ -106,7 +107,9 @@ public class InMemoryFileRepository implements FileRepository {
 
         for (File file : uploadedFiles) {
 
-            if (file.getFileOwner().equals(user)) {
+            final User fileOwner = file.getFileOwner();
+
+            if (fileOwner.getId().equals(userId)) {
 
                 userFiles.add(file);
             }
@@ -122,9 +125,7 @@ public class InMemoryFileRepository implements FileRepository {
     @Override
     public byte[] getFileContent(FileId fileId) {
 
-        final File file = findFileById(fileId);
-
-        return filesContent.get(file);
+        return filesContent.get(fileId);
     }
 
     @Override
@@ -153,24 +154,16 @@ public class InMemoryFileRepository implements FileRepository {
     public synchronized void deleteFile(FileId fileID) {
 
         if (log.isInfoEnabled()) {
-            log.info("Searching for file to be deleted...");
-        }
-
-        final long fileId = fileID.getFileId();
-
-        final File fileToDelete = files.get(fileId);
-
-        if (log.isInfoEnabled()) {
             log.info("Removing file from files map...");
         }
 
-        files.remove(fileId);
+        files.remove(fileID.getId());
 
         if (log.isInfoEnabled()) {
             log.info("Removing file's content...");
         }
 
-        filesContent.remove(fileToDelete);
+        filesContent.remove(fileID);
 
         if (log.isInfoEnabled()) {
             log.info("File successfully deleted.");

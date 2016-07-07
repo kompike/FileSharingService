@@ -67,10 +67,12 @@ public class FileSharingServiceConcurrencyTest {
                     e.getMessage();
                 }
 
-                final User userById = userRepository.findUserById(user.getId());
+                final UserId userId = user.getId();
+
+                final User userById = userRepository.findUserById(userId);
 
                 assertEquals("Users with given ids must be equal: " +
-                        user.getId() + " and " + userById.getId(), user, userById);
+                        userId + " and " + userById.getId(), user, userById);
 
                 final SecurityToken token =
                         userAuthenticationService.login(email,
@@ -98,7 +100,7 @@ public class FileSharingServiceConcurrencyTest {
                 fileService.uploadFile(token, secondFileToBeAdded, fileContent);
 
                 assertEquals("User must have 2 files.", 2,
-                        fileRepository.findAllUserFiles(user).size());
+                        fileRepository.findAllUserFiles(userId).size());
 
                 final File thirdFileToBeAdded =
                         new File("fileName" + currentIndex, new FileSize(256));
@@ -106,12 +108,12 @@ public class FileSharingServiceConcurrencyTest {
                 fileService.uploadFile(token, thirdFileToBeAdded, fileContent);
 
                 assertEquals("User must have 3 files.", 3,
-                        fileRepository.findAllUserFiles(user).size());
+                        fileRepository.findAllUserFiles(userId).size());
 
                 fileService.deleteFile(token, secondFileToBeAdded.getFileId());
 
                 assertEquals("User must have 2 files.", 2,
-                        fileRepository.findAllUserFiles(user).size());
+                        fileRepository.findAllUserFiles(userId).size());
 
                 return user;
             });

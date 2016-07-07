@@ -133,7 +133,9 @@ public class FileServiceImplShould {
 
         fileService.uploadFile(token, file, fileContent);
 
-        final File fileFromRepository = fileRepository.findAllUserFiles(user).iterator().next();
+        final Collection<File> userFiles = fileRepository.findAllUserFiles(user.getId());
+
+        final File fileFromRepository = userFiles.iterator().next();
 
         final InputStream inputStream =
                 fileService.downloadFile(token, fileFromRepository.getFileId());
@@ -152,7 +154,9 @@ public class FileServiceImplShould {
 
             fileService.uploadFile(token, file, fileContent);
 
-            final File fileFromRepository = fileRepository.findAllUserFiles(user).iterator().next();
+            final Collection<File> userFiles = fileRepository.findAllUserFiles(user.getId());
+
+            final File fileFromRepository = userFiles.iterator().next();
 
             fileService.downloadFile(fakeToken, fileFromRepository.getFileId());
 

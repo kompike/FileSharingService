@@ -53,7 +53,7 @@ public class FileServiceImpl implements FileService {
 
         final User user = findUserBySecurityToken(token, "User not authorized to search files.");
 
-        return fileRepository.findAllUserFiles(user);
+        return fileRepository.findAllUserFiles(user.getId());
     }
 
     @Override
