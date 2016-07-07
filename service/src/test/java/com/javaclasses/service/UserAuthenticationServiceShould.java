@@ -9,8 +9,7 @@ import com.javaclasses.service.impl.UserRegistrationServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class UserAuthenticationServiceShould {
 
@@ -60,5 +59,23 @@ public class UserAuthenticationServiceShould {
                     "User with given credentials not found.", ex.getMessage());
         }
 
+    }
+
+    @Test
+    public void logoutUser() throws UserNotFoundException {
+
+        final Email email = new Email("email");
+        final Password password = new Password("password");
+
+        final SecurityToken token =
+                userAuthenticationService.login(email, password);
+
+        assertNotNull("User is not logged in.",
+                userRepository.findLoggedUserBySecurityToken(token));
+
+        userAuthenticationService.logout(token);
+
+        assertNull("User is not logged out.",
+                userRepository.findLoggedUserBySecurityToken(token));
     }
 }
