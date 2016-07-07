@@ -1,5 +1,6 @@
 package com.javaclasses.service.impl;
 
+import com.google.common.base.Preconditions;
 import com.javaclasses.dao.entity.User;
 import com.javaclasses.dao.repository.UserRepository;
 import com.javaclasses.dao.tinytype.Email;
@@ -9,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Implementation of {@link UserRegistrationService} interface
@@ -26,6 +29,8 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     @Override
     public void registerNewUser(User user)
             throws UserAlreadyExistsException {
+
+        checkNotNull(user, "User argument has to be initialized.");
 
         final Collection<User> users = userRepository.findAllRegisteredUsers();
 

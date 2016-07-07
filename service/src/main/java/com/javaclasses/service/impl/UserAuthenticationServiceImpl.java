@@ -10,6 +10,8 @@ import com.javaclasses.service.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Implementation of {@link UserAuthenticationService} interface
  */
@@ -26,6 +28,9 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     @Override
     public SecurityToken login(Email email, Password password)
             throws UserNotFoundException {
+
+        checkNotNull(email, "Email must not be null.");
+        checkNotNull(password, "Password must not be null.");
 
         if (log.isInfoEnabled()) {
 
