@@ -60,4 +60,9 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 
         return token;
     }
+
+    @Override
+    public void logout(SecurityToken token) {
+
+    }
 }
