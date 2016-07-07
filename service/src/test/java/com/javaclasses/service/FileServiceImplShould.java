@@ -13,9 +13,7 @@ import com.javaclasses.service.impl.UserRegistrationServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Collection;
 
 import static org.junit.Assert.*;
@@ -34,6 +32,9 @@ public class FileServiceImplShould {
     private final SecurityToken fakeToken = new SecurityToken(11);
 
     private SecurityToken token;
+
+    public FileServiceImplShould() throws FileNotFoundException {
+    }
 
     @Before
     public void createUsers() throws UserAlreadyExistsException {

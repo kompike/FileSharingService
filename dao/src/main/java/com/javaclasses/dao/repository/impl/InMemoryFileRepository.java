@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -49,7 +48,6 @@ public class InMemoryFileRepository implements FileRepository {
         }
 
         file.setFileOwner(user);
-        file.setCreationDate(new Date(System.currentTimeMillis()));
 
         files.put(fileIdCounter++, file);
 
