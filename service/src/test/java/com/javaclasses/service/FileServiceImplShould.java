@@ -73,9 +73,14 @@ public class FileServiceImplShould {
 
         fileService.uploadFile(token, file, fileContent);
 
-        final File fileFromRepository = fileRepository.findFileById(file.getFileId());
+        final FileId fileId = file.getFileId();
+
+        final File fileFromRepository = fileRepository.findFileById(fileId);
 
         assertEquals("Files must be equals.", file, fileFromRepository);
+
+        assertNotNull("Uploaded file content can not be null.",
+                fileRepository.getFileContent(fileId));
     }
 
 

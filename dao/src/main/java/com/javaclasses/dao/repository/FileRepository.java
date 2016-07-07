@@ -36,6 +36,13 @@ public interface FileRepository {
     Collection<File> findAllUserFiles(User user);
 
     /**
+     * Browse file content by file identifier
+     * @param fileId Identifier of desired file
+     * @return Content of file in byte array
+     */
+    byte[] getFileContent(FileId fileId);
+
+    /**
      * Downloads given file content
      * @param fileId Identifier of file to be downloaded
      * @return Input stream with given file content

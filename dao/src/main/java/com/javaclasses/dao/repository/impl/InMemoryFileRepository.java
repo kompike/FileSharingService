@@ -27,7 +27,7 @@ public class InMemoryFileRepository implements FileRepository {
 
     private final Map<Long, File> files = new ConcurrentHashMap<>();
 
-    private final Map<File, byte[]> uploadedFilesContent = new ConcurrentHashMap<>();
+    private final Map<File, byte[]> filesContent = new ConcurrentHashMap<>();
 
     public InMemoryFileRepository() {
         fileIdCounter = files.size();
@@ -55,9 +55,18 @@ public class InMemoryFileRepository implements FileRepository {
             log.info("Start uploading file content to the storage...");
         }
 
-        final byte[] bytes = ByteStreams.toByteArray(inputStream);
+        final byte[] bytes;
 
-        uploadedFilesContent.put(file, bytes);
+        try {
+
+            bytes = ByteStreams.toByteArray(inputStream);
+
+        } finally {
+
+            inputStream.close();
+        }
+
+        filesContent.put(file, bytes);
 
         if (log.isInfoEnabled()) {
             log.info("File content successfully added to the storage.");
@@ -87,7 +96,7 @@ public class InMemoryFileRepository implements FileRepository {
             log.info("Getting the list of all files in memory...");
         }
 
-        final Collection<File> allAvailableFiles = files.values();
+        final Collection<File> uploadedFiles = files.values();
 
         final Collection<File> userFiles = new ArrayList<>();
 
@@ -95,7 +104,7 @@ public class InMemoryFileRepository implements FileRepository {
             log.info("Looking for files of current user...");
         }
 
-        for (File file : allAvailableFiles) {
+        for (File file : uploadedFiles) {
 
             if (file.getFileOwner().equals(user)) {
 
@@ -111,18 +120,26 @@ public class InMemoryFileRepository implements FileRepository {
     }
 
     @Override
+    public byte[] getFileContent(FileId fileId) {
+
+        final File file = findFileById(fileId);
+
+        return filesContent.get(file);
+    }
+
+    @Override
     public synchronized InputStream downloadFile(FileId fileId) {
 
         if (log.isInfoEnabled()) {
             log.info("Start downloading file...");
         }
 
-        final File file = findFileById(fileId);
-
-        final byte[] result = uploadedFilesContent.get(file);
+        final byte[] result = getFileContent(fileId);
 
         try {
+
             return new ByteArrayInputStream(result);
+
         } finally {
 
             if (log.isInfoEnabled()) {
@@ -153,7 +170,7 @@ public class InMemoryFileRepository implements FileRepository {
             log.info("Removing file's content...");
         }
 
-        uploadedFilesContent.remove(fileToDelete);
+        filesContent.remove(fileToDelete);
 
         if (log.isInfoEnabled()) {
             log.info("File successfully deleted.");
