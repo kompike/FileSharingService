@@ -13,11 +13,9 @@ public class File {
     private Date creationDate;
     private User fileOwner;
 
-    public File(String fileName, long fileSize, Date creationDate, User fileOwner) {
+    public File(String fileName, long fileSize) {
         this.fileName = fileName;
         this.fileSize = fileSize;
-        this.creationDate = creationDate;
-        this.fileOwner = fileOwner;
     }
 
     public long getFileId() {

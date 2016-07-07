@@ -3,6 +3,7 @@ package com.javaclasses.service;
 import com.javaclasses.dao.entity.File;
 import com.javaclasses.dao.tinytype.SecurityToken;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 
@@ -16,16 +17,27 @@ public interface FileService {
      * @param token Security token of current user
      * @param file File to be added to the system
      * @param inputStream Stream for saving file content
-     * @throws IllegalSecurityTokenException Occurs when given security token is not valid
+     * @throws UserNotAuthorizedException Occurs when given security token is not valid
      */
     void uploadFile(SecurityToken token, File file, InputStream inputStream)
-            throws IllegalSecurityTokenException;
+            throws UserNotAuthorizedException, IOException;
 
     /**
      * Looking for all files of current user
      * @param token Security token of current user
      * @return List of all files of current user
+     * @throws UserNotAuthorizedException Occurs when given security token is not valid
      */
     Collection<File> findAllFilesOfCurrentUser(SecurityToken token)
-            throws IllegalSecurityTokenException;
+            throws UserNotAuthorizedException;
+
+    /**
+     * Download new file from the system
+     * @param token Security token of current user
+     * @param file File to be downloaded
+     * @return Input stream of downloaded file content
+     * @throws UserNotAuthorizedException Occurs when given security token is not valid
+     */
+    InputStream downloadFile(SecurityToken token, File file)
+            throws UserNotAuthorizedException;
 }

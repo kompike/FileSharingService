@@ -6,8 +6,9 @@ import com.javaclasses.dao.repository.FileRepository;
 import com.javaclasses.dao.repository.UserRepository;
 import com.javaclasses.dao.tinytype.SecurityToken;
 import com.javaclasses.service.FileService;
-import com.javaclasses.service.IllegalSecurityTokenException;
+import com.javaclasses.service.UserNotAuthorizedException;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 
@@ -26,22 +27,36 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public void uploadFile(SecurityToken token, File file, InputStream inputStream)
-            throws IllegalSecurityTokenException {
+            throws UserNotAuthorizedException, IOException {
 
         final User user = userRepository.findLoggedUserBySecurityToken(token);
 
         if (user == null) {
 
-            throw new IllegalSecurityTokenException(
-                    "User with given security token not found", token);
+            throw new UserNotAuthorizedException("User not authorized.");
         }
 
-        fileRepository.createFile(file, inputStream);
+        fileRepository.createFile(file, user, inputStream);
     }
 
     @Override
     public Collection<File> findAllFilesOfCurrentUser(SecurityToken token)
-            throws IllegalSecurityTokenException{
+            throws UserNotAuthorizedException {
+
+        final User user = userRepository.findLoggedUserBySecurityToken(token);
+
+        if (user == null) {
+
+            throw new UserNotAuthorizedException("User not authorized.");
+        }
+
+        return fileRepository.findAllUserFiles(user);
+    }
+
+    @Override
+    public InputStream downloadFile(SecurityToken token, File file)
+            throws UserNotAuthorizedException {
+
         return null;
     }
 }
