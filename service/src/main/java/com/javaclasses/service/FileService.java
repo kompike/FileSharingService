@@ -32,7 +32,7 @@ public interface FileService {
             throws UserNotAuthorizedException;
 
     /**
-     * Download new file from the system
+     * Download file from the system
      * @param token Security token of current user
      * @param file File to be downloaded
      * @return Input stream of downloaded file content
@@ -40,4 +40,12 @@ public interface FileService {
      */
     InputStream downloadFile(SecurityToken token, File file)
             throws UserNotAuthorizedException;
+
+    /**
+     * Delete file from the system
+     * @param token Security token of current user
+     * @param file File to be deleted
+     * @throws UserNotAuthorizedException Occurs when given security token is not valid
+     */
+    void deleteFile(SecurityToken token, File file) throws UserNotAuthorizedException;
 }

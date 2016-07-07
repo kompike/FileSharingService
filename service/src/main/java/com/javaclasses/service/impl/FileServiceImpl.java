@@ -66,4 +66,10 @@ public class FileServiceImpl implements FileService {
 
         return fileRepository.downloadFile(file);
     }
+
+    @Override
+    public void deleteFile(SecurityToken token, File file)
+            throws UserNotAuthorizedException {
+
+    }
 }
