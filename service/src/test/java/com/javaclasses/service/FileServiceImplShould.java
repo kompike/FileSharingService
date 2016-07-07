@@ -23,9 +23,9 @@ import static org.junit.Assert.fail;
 public class FileServiceImplShould {
 
     private final FileRepository fileRepository = new InMemoryFileRepository();
-    private final FileService fileService = new FileServiceImpl(fileRepository);
-
     private final UserRepository userRepository = new InMemoryUserRepository();
+    private final FileService fileService = new FileServiceImpl(fileRepository, userRepository);
+
     private final UserAuthenticationService userAuthenticationService =
             new UserAuthenticationServiceImpl(userRepository);
 
@@ -44,7 +44,7 @@ public class FileServiceImplShould {
 
         fileService.uploadFile(token, file, new ByteInputStream());
 
-        final File fileFromRepository = fileRepository.findFileById(token, file.getFileId());
+        final File fileFromRepository = fileRepository.findFileById(file.getFileId());
 
         Assert.assertEquals("", file, fileFromRepository);
     }

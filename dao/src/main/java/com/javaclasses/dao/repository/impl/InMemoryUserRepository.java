@@ -17,7 +17,7 @@ public class InMemoryUserRepository implements UserRepository {
 
     private final Logger log = LoggerFactory.getLogger(InMemoryUserRepository.class);
 
-    private long idCounter;
+    private long userIdCounter;
 
     private final Map<Long, User> registeredUsers = new HashMap<Long, User>(){{
 
@@ -32,7 +32,7 @@ public class InMemoryUserRepository implements UserRepository {
     private final Map<SecurityToken, User> loggedUsers = new HashMap<>();
 
     public InMemoryUserRepository() {
-        idCounter = registeredUsers.size();
+        userIdCounter = registeredUsers.size();
     }
 
     @Override
@@ -42,13 +42,13 @@ public class InMemoryUserRepository implements UserRepository {
             log.info("Start creating new user...");
         }
 
-        user.setId(idCounter);
+        user.setId(userIdCounter);
 
         if (log.isInfoEnabled()) {
             log.info("New user id: " + user.getId());
         }
 
-        registeredUsers.put(idCounter++, user);
+        registeredUsers.put(userIdCounter++, user);
 
         if (log.isInfoEnabled()) {
             log.info("Users map size is: " + registeredUsers.size());

@@ -10,9 +10,10 @@ public interface FileRepository {
 
     /**
      * Add new file to the database
+     * @param token Security token of current user
      * @param file File to be added
      */
-    void createFile(File file);
+    void createFile(SecurityToken token, File file);
 
     /**
      * Search for file in database by id
@@ -20,5 +21,5 @@ public interface FileRepository {
      * @param fileId Id of desired file
      * @return File with given id
      */
-    File findFileById(SecurityToken token, long fileId);
+    File findFileById(long fileId);
 }
