@@ -18,10 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 
-import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class FileServiceImplShould {
 

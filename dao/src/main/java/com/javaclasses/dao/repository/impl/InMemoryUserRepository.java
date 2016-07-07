@@ -17,7 +17,7 @@ public class InMemoryUserRepository implements UserRepository {
 
     private final Logger log = LoggerFactory.getLogger(InMemoryUserRepository.class);
 
-    private long userIdCounter;
+    private volatile long userIdCounter;
 
     private final Map<Long, User> registeredUsers = new HashMap<>();
 
@@ -28,7 +28,7 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public void create(User user) {
+    public synchronized void create(User user) {
 
         if (log.isInfoEnabled()) {
             log.info("Start creating new user...");
@@ -52,7 +52,7 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public User findUserById(UserId userId) {
+    public synchronized User findUserById(UserId userId) {
 
         if (log.isInfoEnabled()) {
             log.info("Looking for user with id: " + userId);
@@ -62,7 +62,7 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public User findUserByEmail(Email email) {
+    public synchronized User findUserByEmail(Email email) {
 
         final Collection<User> registeredUsers = findAllRegisteredUsers();
 
@@ -86,7 +86,7 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public Collection<User> findAllRegisteredUsers() {
+    public synchronized Collection<User> findAllRegisteredUsers() {
 
         if (log.isInfoEnabled()) {
             log.info("Getting the list of all registered users.");
@@ -96,7 +96,7 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public void addLoggedUser(SecurityToken token, User user) {
+    public synchronized void addLoggedUser(SecurityToken token, User user) {
 
         if (log.isInfoEnabled()) {
             log.info("User logged in.");
@@ -106,7 +106,7 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public User findLoggedUserBySecurityToken(SecurityToken token) {
+    public synchronized User findLoggedUserBySecurityToken(SecurityToken token) {
 
         if (log.isInfoEnabled()) {
             log.info("Looking for user with security token: " + token);

@@ -24,14 +24,14 @@ public class InMemoryFileRepository implements FileRepository {
 
     private final Logger log = LoggerFactory.getLogger(InMemoryFileRepository.class);
 
-    private long fileIdCounter;
+    private volatile long fileIdCounter;
 
     private final Map<Long, File> files = new HashMap<>();
 
     private final Map<File, byte[]> uploadedFilesContent = new HashMap<>();
 
     @Override
-    public void createFile(File file, User user, InputStream inputStream)
+    public synchronized void createFile(File file, User user, InputStream inputStream)
             throws IOException {
 
         if (log.isInfoEnabled()) {
@@ -69,7 +69,7 @@ public class InMemoryFileRepository implements FileRepository {
     }
 
     @Override
-    public File findFileById(FileId fileId) {
+    public synchronized File findFileById(FileId fileId) {
 
         if (log.isInfoEnabled()) {
             log.info("Looking for file with id: " + fileId);
@@ -79,7 +79,7 @@ public class InMemoryFileRepository implements FileRepository {
     }
 
     @Override
-    public Collection<File> findAllUserFiles(User user) {
+    public synchronized Collection<File> findAllUserFiles(User user) {
 
         if (log.isInfoEnabled()) {
             log.info("Getting the list of all files in memory...");
@@ -109,7 +109,7 @@ public class InMemoryFileRepository implements FileRepository {
     }
 
     @Override
-    public InputStream downloadFile(FileId fileId) {
+    public synchronized InputStream downloadFile(FileId fileId) {
 
         if (log.isInfoEnabled()) {
             log.info("Start downloading file...");
@@ -131,7 +131,7 @@ public class InMemoryFileRepository implements FileRepository {
     }
 
     @Override
-    public void deleteFile(FileId fileID) {
+    public synchronized void deleteFile(FileId fileID) {
 
         if (log.isInfoEnabled()) {
             log.info("Searching for file to be deleted...");
