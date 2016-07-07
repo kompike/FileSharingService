@@ -26,5 +26,6 @@ public interface FileService {
      * @param token Security token of current user
      * @return List of all files of current user
      */
-    Collection<File> findAllUserFiles(SecurityToken token);
+    Collection<File> findAllFilesOfCurrentUser(SecurityToken token)
+            throws IllegalSecurityTokenException;
 }

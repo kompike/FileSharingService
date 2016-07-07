@@ -40,7 +40,8 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public Collection<File> findAllUserFiles(SecurityToken token) {
+    public Collection<File> findAllFilesOfCurrentUser(SecurityToken token)
+            throws IllegalSecurityTokenException{
         return null;
     }
 }

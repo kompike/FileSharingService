@@ -11,13 +11,14 @@ import com.javaclasses.dao.tinytype.Password;
 import com.javaclasses.dao.tinytype.SecurityToken;
 import com.javaclasses.service.impl.FileServiceImpl;
 import com.javaclasses.service.impl.UserAuthenticationServiceImpl;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.sql.Date;
+import java.util.Collection;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 public class FileServiceImplShould {
@@ -47,13 +48,13 @@ public class FileServiceImplShould {
 
         final File fileFromRepository = fileRepository.findFileById(file.getFileId());
 
-        Assert.assertEquals("", file, fileFromRepository);
+        assertEquals("", file, fileFromRepository);
     }
 
 
 
     @Test
-    public void testIllegalSecurityTokenException() throws UserNotFoundException {
+    public void testIllegalSecurityTokenWhileUploadingFile() throws UserNotFoundException {
 
         final Email email = new Email("email");
         final Password password = new Password("password");
@@ -77,6 +78,38 @@ public class FileServiceImplShould {
 
             assertEquals("Expected and actual security tokens must be equal for new file uploading.",
                     fakeToken, ex.getToken());
+        }
+
+    }
+
+    @Test
+    public void findAllFilesOfCurrentUser() throws UserNotFoundException, IllegalSecurityTokenException {
+
+        final Email email = new Email("email");
+        final Password password = new Password("password");
+
+        final SecurityToken token =
+                userAuthenticationService.login(email, password);
+
+        final Collection<File> files = fileService.findAllFilesOfCurrentUser(token);
+
+        assertNotNull("Wrong number of current user's uploaded files.", files);
+    }
+
+    @Test
+    public void testIllegalSecurityTokenWhileSearchingUserFiles() throws UserNotFoundException {
+
+        final SecurityToken fakeToken = new SecurityToken(11);
+
+        try {
+
+            fileService.findAllFilesOfCurrentUser(fakeToken);
+
+            fail("IllegalSecurityTokenException was not thrown.");
+        } catch (IllegalSecurityTokenException ex) {
+
+            assertEquals("Wrong message for searching user files with fake security token.",
+                    "Can not find user by given security token", ex.getMessage());
         }
 
     }
