@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Implementation of {@link UserRepository} interface for internal data
+ * Implementation of {@link UserRepository} interface for in memory data
  */
 public class InMemoryUserRepository implements UserRepository {
 

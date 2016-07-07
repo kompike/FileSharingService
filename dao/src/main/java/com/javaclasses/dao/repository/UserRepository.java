@@ -13,7 +13,7 @@ public interface UserRepository {
 
     /**
      * Add new user to the database
-     * @param user
+     * @param user User to be added
      */
     void create(User user);
 
