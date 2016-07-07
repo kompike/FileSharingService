@@ -37,7 +37,7 @@ public class FileSharingServiceConcurrencyTest {
     public void testExecutionInMultipleTreads()
             throws InterruptedException, ExecutionException {
 
-        final int threadPoolSize = 50;
+        final int threadPoolSize = 30;
 
         final CountDownLatch startLatch = new CountDownLatch(threadPoolSize);
 
@@ -56,9 +56,11 @@ public class FileSharingServiceConcurrencyTest {
 
                 final Email email = new Email("email" + currentIndex);
 
+                final Password password = new Password("password" + currentIndex);
+
                 final User user = new User(
-                        email, new Password("password" + currentIndex),
-                        new FirstName("firstName" + currentIndex), new LastName("lastName" + currentIndex));
+                        email, password, new FirstName("firstName" + currentIndex),
+                        new LastName("lastName" + currentIndex));
 
                 try {
 
@@ -75,24 +77,23 @@ public class FileSharingServiceConcurrencyTest {
                         userId + " and " + userById.getId(), user, userById);
 
                 final SecurityToken token =
-                        userAuthenticationService.login(email,
-                                new Password("password" + currentIndex));
+                        userAuthenticationService.login(email, password);
 
-                assertEquals("Emails must be equal", "email" + currentIndex,
-                        userRepository.findLoggedUserBySecurityToken(token).getEmail().getEmail());
+                assertEquals("Emails must be equal", email,
+                        userRepository.findLoggedUserBySecurityToken(token).getEmail());
 
-                final File fileToBeAdded =
+                final File firstFileToBeAdded =
                         new File("fileName" + currentIndex, new FileSize(256));
 
                 final ByteArrayInputStream fileContent =
                         new ByteArrayInputStream(new byte[256]);
 
-                fileService.uploadFile(token, fileToBeAdded, fileContent);
+                fileService.uploadFile(token, firstFileToBeAdded, fileContent);
 
                 final File fileFromRepository =
-                        fileRepository.findFileById(fileToBeAdded.getFileId());
+                        fileRepository.findFileById(firstFileToBeAdded.getFileId());
 
-                assertEquals("Files must be equals.", fileToBeAdded, fileFromRepository);
+                assertEquals("Files must be equals.", firstFileToBeAdded, fileFromRepository);
 
                 final File secondFileToBeAdded =
                         new File("fileName" + currentIndex, new FileSize(256));
