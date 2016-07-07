@@ -4,6 +4,7 @@ import com.google.common.io.ByteStreams;
 import com.javaclasses.dao.entity.File;
 import com.javaclasses.dao.entity.User;
 import com.javaclasses.dao.repository.FileRepository;
+import com.javaclasses.dao.tinytype.FileId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ public class InMemoryFileRepository implements FileRepository {
             log.info("Start adding new file...");
         }
 
-        file.setFileId(fileIdCounter);
+        file.setFileId(new FileId(fileIdCounter));
 
         if (log.isInfoEnabled()) {
             log.info("New file id: " + file.getFileId());
@@ -68,13 +69,13 @@ public class InMemoryFileRepository implements FileRepository {
     }
 
     @Override
-    public File findFileById(long fileId) {
+    public File findFileById(FileId fileId) {
 
         if (log.isInfoEnabled()) {
             log.info("Looking for file with id: " + fileId);
         }
 
-        return files.get(fileId);
+        return files.get(fileId.getFileId());
     }
 
     @Override
@@ -108,11 +109,13 @@ public class InMemoryFileRepository implements FileRepository {
     }
 
     @Override
-    public InputStream downloadFile(File file) {
+    public InputStream downloadFile(FileId fileId) {
 
         if (log.isInfoEnabled()) {
             log.info("Start downloading file...");
         }
+
+        final File file = findFileById(fileId);
 
         final byte[] result = uploadedFilesContent.get(file);
 
@@ -128,19 +131,21 @@ public class InMemoryFileRepository implements FileRepository {
     }
 
     @Override
-    public void deleteFile(long fileID) {
+    public void deleteFile(FileId fileID) {
 
         if (log.isInfoEnabled()) {
             log.info("Searching for file to be deleted...");
         }
 
-        final File fileToDelete = files.get(fileID);
+        final long fileId = fileID.getFileId();
+
+        final File fileToDelete = files.get(fileId);
 
         if (log.isInfoEnabled()) {
             log.info("Removing file from files map...");
         }
 
-        files.remove(fileID);
+        files.remove(fileId);
 
         if (log.isInfoEnabled()) {
             log.info("Removing file's content...");

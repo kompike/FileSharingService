@@ -1,6 +1,7 @@
 package com.javaclasses.service;
 
 import com.javaclasses.dao.entity.File;
+import com.javaclasses.dao.tinytype.FileId;
 import com.javaclasses.dao.tinytype.SecurityToken;
 
 import java.io.IOException;
@@ -34,18 +35,18 @@ public interface FileService {
     /**
      * Download file from the system
      * @param token Security token of current user
-     * @param file File to be downloaded
+     * @param fileId Identifier of file to be downloaded
      * @return Input stream of downloaded file content
      * @throws UserNotAuthorizedException Occurs when given security token is not valid
      */
-    InputStream downloadFile(SecurityToken token, File file)
+    InputStream downloadFile(SecurityToken token, FileId fileId)
             throws UserNotAuthorizedException;
 
     /**
      * Delete file from the system
      * @param token Security token of current user
-     * @param file File to be deleted
+     * @param fileId Identifier of file to be downloaded
      * @throws UserNotAuthorizedException Occurs when given security token is not valid
      */
-    void deleteFile(SecurityToken token, File file) throws UserNotAuthorizedException;
+    void deleteFile(SecurityToken token, FileId fileId) throws UserNotAuthorizedException;
 }

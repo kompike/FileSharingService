@@ -1,29 +1,31 @@
 package com.javaclasses.dao.entity;
 
+import com.javaclasses.dao.tinytype.FileId;
+import com.javaclasses.dao.tinytype.FileSize;
+
 import java.sql.Date;
 
 /**
- * Service file entity
+ * Entity of service file
  */
 public class File {
 
-    private long fileId;
+    private FileId fileId;
     private String fileName;
-    private long fileSize;
+    private FileSize fileSize;
     private Date creationDate;
     private User fileOwner;
 
-    public File(String fileName, long fileSize) {
+    public File(String fileName, FileSize fileSize) {
         this.fileName = fileName;
         this.fileSize = fileSize;
     }
 
-    public long getFileId() {
-
+    public FileId getFileId() {
         return fileId;
     }
 
-    public void setFileId(long fileId) {
+    public void setFileId(FileId fileId) {
         this.fileId = fileId;
     }
 
@@ -35,11 +37,11 @@ public class File {
         this.fileName = fileName;
     }
 
-    public long getFileSize() {
+    public FileSize getFileSize() {
         return fileSize;
     }
 
-    public void setFileSize(long fileSize) {
+    public void setFileSize(FileSize fileSize) {
         this.fileSize = fileSize;
     }
 
@@ -66,9 +68,9 @@ public class File {
 
         File file = (File) o;
 
-        if (getFileId() != file.getFileId()) return false;
-        if (getFileSize() != file.getFileSize()) return false;
+        if (!getFileId().equals(file.getFileId())) return false;
         if (!getFileName().equals(file.getFileName())) return false;
+        if (!getFileSize().equals(file.getFileSize())) return false;
         if (!getCreationDate().equals(file.getCreationDate())) return false;
         return getFileOwner().equals(file.getFileOwner());
 
@@ -76,9 +78,9 @@ public class File {
 
     @Override
     public int hashCode() {
-        int result = (int) (getFileId() ^ (getFileId() >>> 32));
+        int result = getFileId().hashCode();
         result = 31 * result + getFileName().hashCode();
-        result = 31 * result + (int) (getFileSize() ^ (getFileSize() >>> 32));
+        result = 31 * result + getFileSize().hashCode();
         result = 31 * result + getCreationDate().hashCode();
         result = 31 * result + getFileOwner().hashCode();
         return result;

@@ -3,6 +3,7 @@ package com.javaclasses.dao.repository;
 import com.javaclasses.dao.entity.User;
 import com.javaclasses.dao.tinytype.Email;
 import com.javaclasses.dao.tinytype.SecurityToken;
+import com.javaclasses.dao.tinytype.UserId;
 
 import java.util.Collection;
 
@@ -22,7 +23,7 @@ public interface UserRepository {
      * @param userId Id of desired user
      * @return User with given id
      */
-    User findUserById(long userId);
+    User findUserById(UserId userId);
 
     /**
      * Search for user in database by email

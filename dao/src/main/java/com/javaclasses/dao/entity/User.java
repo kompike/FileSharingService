@@ -1,16 +1,13 @@
 package com.javaclasses.dao.entity;
 
-import com.javaclasses.dao.tinytype.Email;
-import com.javaclasses.dao.tinytype.FirstName;
-import com.javaclasses.dao.tinytype.LastName;
-import com.javaclasses.dao.tinytype.Password;
+import com.javaclasses.dao.tinytype.*;
 
 /**
- * Service user entity
+ * Entity of service user
  */
 public class User {
 
-    private long id;
+    private UserId id;
     private Email email;
     private Password password;
     private FirstName firstName;
@@ -23,11 +20,11 @@ public class User {
         this.lastName = lastName;
     }
 
-    public long getId() {
+    public UserId getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(UserId id) {
         this.id = id;
     }
 
@@ -70,7 +67,7 @@ public class User {
 
         User user = (User) o;
 
-        if (getId() != user.getId()) return false;
+        if (!getId().equals(user.getId())) return false;
         if (!getEmail().equals(user.getEmail())) return false;
         if (!getPassword().equals(user.getPassword())) return false;
         if (!getFirstName().equals(user.getFirstName())) return false;
@@ -80,7 +77,7 @@ public class User {
 
     @Override
     public int hashCode() {
-        int result = (int) (getId() ^ (getId() >>> 32));
+        int result = getId().hashCode();
         result = 31 * result + getEmail().hashCode();
         result = 31 * result + getPassword().hashCode();
         result = 31 * result + getFirstName().hashCode();

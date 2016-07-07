@@ -6,11 +6,11 @@ import com.javaclasses.dao.repository.FileRepository;
 import com.javaclasses.dao.repository.UserRepository;
 import com.javaclasses.dao.repository.impl.InMemoryFileRepository;
 import com.javaclasses.dao.repository.impl.InMemoryUserRepository;
-import com.javaclasses.dao.tinytype.Email;
-import com.javaclasses.dao.tinytype.Password;
-import com.javaclasses.dao.tinytype.SecurityToken;
+import com.javaclasses.dao.tinytype.*;
 import com.javaclasses.service.impl.FileServiceImpl;
 import com.javaclasses.service.impl.UserAuthenticationServiceImpl;
+import com.javaclasses.service.impl.UserRegistrationServiceImpl;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -29,25 +29,51 @@ public class FileServiceImplShould {
     private final UserRepository userRepository = new InMemoryUserRepository();
     private final FileService fileService = new FileServiceImpl(fileRepository, userRepository);
 
-    private final UserAuthenticationService userAuthenticationService =
-            new UserAuthenticationServiceImpl(userRepository);
+    private final File file = new File("newFile", new FileSize(256));
 
-    private final Email email = new Email("email");
-    private final Password password = new Password("password");
-
-    private final File file = new File("newFile", 256);
+    private final InputStream fileContent =
+            new ByteArrayInputStream(new byte[(int) file.getFileSize().getSize()]);
 
     private final SecurityToken fakeToken = new SecurityToken(11);
+
+    private SecurityToken token;
+
+    @Before
+    public void createUsers() throws UserAlreadyExistsException {
+
+        final UserRegistrationService userRegistrationService =
+                new UserRegistrationServiceImpl(userRepository);
+
+        final User user1 = new User(new Email("email"),
+                new Password("password"), new FirstName("firstName"), new LastName("lastName"));
+        final User user2 = new User(new Email("email1"),
+                new Password("password1"), new FirstName("firstName1"), new LastName("lastName1"));
+        final User user3 = new User(new Email("email2"),
+                new Password("password2"), new FirstName("firstName2"), new LastName("lastName2"));
+
+        userRegistrationService.registerNewUser(user1);
+        userRegistrationService.registerNewUser(user2);
+        userRegistrationService.registerNewUser(user3);
+    }
+
+    @Before
+    public void authorizeUser() throws UserAlreadyExistsException, UserNotFoundException {
+
+        final UserAuthenticationService userAuthenticationService =
+                new UserAuthenticationServiceImpl(userRepository);
+
+        final Email email = new Email("email");
+        final Password password = new Password("password");
+
+        token = userAuthenticationService.login(email, password);
+
+    }
 
     @Test
     public void uploadNewFile()
             throws UserNotAuthorizedException, UserNotFoundException, IOException {
 
-        final SecurityToken token =
-                userAuthenticationService.login(email, password);
-
-        fileService.uploadFile(token, file,
-                new ByteArrayInputStream(new byte[(int) file.getFileSize()]));
+        fileService.uploadFile(token, file, fileContent);
 
         final File fileFromRepository = fileRepository.findFileById(file.getFileId());
 
@@ -55,17 +81,13 @@ public class FileServiceImplShould {
     }
 
 
-
     @Test
     public void testIllegalSecurityTokenWhileUploadingFile()
             throws UserNotFoundException, IOException {
 
-        userAuthenticationService.login(email, password);
-
         try {
 
-            fileService.uploadFile(fakeToken, file,
-                    new ByteArrayInputStream(new byte[(int) file.getFileSize()]));
+            fileService.uploadFile(fakeToken, file, fileContent);
 
             fail("UserNotAuthorizedException was not thrown.");
         } catch (UserNotAuthorizedException ex) {
@@ -78,9 +100,6 @@ public class FileServiceImplShould {
 
     @Test
     public void findAllFilesOfCurrentUser() throws UserNotFoundException, UserNotAuthorizedException {
-
-        final SecurityToken token =
-                userAuthenticationService.login(email, password);
 
         final Collection<File> files = fileService.findAllFilesOfCurrentUser(token);
 
@@ -98,7 +117,7 @@ public class FileServiceImplShould {
         } catch (UserNotAuthorizedException ex) {
 
             assertEquals("Wrong message for searching user files with fake security token.",
-                    "User not authorized.", ex.getMessage());
+                    "User not authorized to search files.", ex.getMessage());
         }
 
     }
@@ -107,39 +126,32 @@ public class FileServiceImplShould {
     public void downloadFile()
             throws UserNotAuthorizedException, UserNotFoundException, IOException {
 
-        final SecurityToken token =
-                userAuthenticationService.login(email, password);
-
         final User user = userRepository.findLoggedUserBySecurityToken(token);
 
-        fileService.uploadFile(token, file,
-                new ByteArrayInputStream(new byte[(int) file.getFileSize()]));
+        fileService.uploadFile(token, file, fileContent);
 
         final File fileFromRepository = fileRepository.findAllUserFiles(user).iterator().next();
 
-        final InputStream inputStream = fileService.downloadFile(token, fileFromRepository);
+        final InputStream inputStream =
+                fileService.downloadFile(token, fileFromRepository.getFileId());
 
         assertNotNull("Stream must contain data.", inputStream);
     }
-
 
 
     @Test
     public void testIllegalSecurityTokenWhileDownloadingFile()
             throws UserNotFoundException, IOException {
 
-        final SecurityToken token = userAuthenticationService.login(email, password);
-
         final User user = userRepository.findLoggedUserBySecurityToken(token);
 
         try {
 
-            fileService.uploadFile(token, file,
-                    new ByteArrayInputStream(new byte[(int) file.getFileSize()]));
+            fileService.uploadFile(token, file, fileContent);
 
             final File fileFromRepository = fileRepository.findAllUserFiles(user).iterator().next();
 
-            fileService.downloadFile(fakeToken, fileFromRepository);
+            fileService.downloadFile(fakeToken, fileFromRepository.getFileId());
 
             fail("UserNotAuthorizedException was not thrown.");
         } catch (UserNotAuthorizedException ex) {
@@ -154,31 +166,23 @@ public class FileServiceImplShould {
     public void deleteFile()
             throws UserNotAuthorizedException, UserNotFoundException, IOException {
 
-        final SecurityToken token =
-                userAuthenticationService.login(email, password);
+        fileService.uploadFile(token, file, fileContent);
 
-        fileService.uploadFile(token, file,
-                new ByteArrayInputStream(new byte[(int) file.getFileSize()]));
-
-        fileService.deleteFile(token, file);
+        fileService.deleteFile(token, file.getFileId());
 
         assertNull("File was not deleted.", fileRepository.findFileById(file.getFileId()));
     }
-
 
 
     @Test
     public void testIllegalSecurityTokenWhileDeletingFile()
             throws UserNotFoundException, IOException {
 
-        final SecurityToken token = userAuthenticationService.login(email, password);
-
         try {
 
-            fileService.uploadFile(token, file,
-                    new ByteArrayInputStream(new byte[(int) file.getFileSize()]));
+            fileService.uploadFile(token, file, fileContent);
 
-            fileService.deleteFile(fakeToken, file);
+            fileService.deleteFile(fakeToken, file.getFileId());
 
             fail("UserNotAuthorizedException was not thrown.");
         } catch (UserNotAuthorizedException ex) {

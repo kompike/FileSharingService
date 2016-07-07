@@ -7,11 +7,15 @@ import com.javaclasses.dao.tinytype.Password;
 import com.javaclasses.dao.tinytype.SecurityToken;
 import com.javaclasses.service.UserAuthenticationService;
 import com.javaclasses.service.UserNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of {@link UserAuthenticationService} interface
  */
 public class UserAuthenticationServiceImpl implements UserAuthenticationService {
+
+    private final Logger log = LoggerFactory.getLogger(UserAuthenticationServiceImpl.class);
 
     private final UserRepository userRepository;
 
@@ -23,11 +27,26 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     public SecurityToken login(Email email, Password password)
             throws UserNotFoundException {
 
+        if (log.isInfoEnabled()) {
+
+            log.info("Searching for user with email: " + email);
+        }
+
         final User user = userRepository.findUserByEmail(email);
 
         if (user == null || !user.getPassword().equals(password)) {
 
+            if (log.isWarnEnabled()) {
+
+                log.warn("User with given credentials not found.");
+            }
+
             throw new UserNotFoundException("User with given credentials not found.");
+        }
+
+        if (log.isInfoEnabled()) {
+
+            log.info("Creating new security token...");
         }
 
         final SecurityToken token = new SecurityToken(user.hashCode());

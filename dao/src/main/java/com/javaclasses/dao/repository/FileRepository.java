@@ -2,6 +2,7 @@ package com.javaclasses.dao.repository;
 
 import com.javaclasses.dao.entity.File;
 import com.javaclasses.dao.entity.User;
+import com.javaclasses.dao.tinytype.FileId;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +26,7 @@ public interface FileRepository {
      * @param fileId Id of desired file
      * @return File with given id
      */
-    File findFileById(long fileId);
+    File findFileById(FileId fileId);
 
     /**
      * Looking for all files of given user
@@ -36,14 +37,14 @@ public interface FileRepository {
 
     /**
      * Downloads given file content
-     * @param file File to be downloaded
+     * @param fileId Identifier of file to be downloaded
      * @return Input stream with given file content
      */
-    InputStream downloadFile(File file);
+    InputStream downloadFile(FileId fileId);
 
     /**
      * Deletes given file from the database
      * @param fileId Identifier of file to be deleted
      */
-    void deleteFile(long fileId);
+    void deleteFile(FileId fileId);
 }

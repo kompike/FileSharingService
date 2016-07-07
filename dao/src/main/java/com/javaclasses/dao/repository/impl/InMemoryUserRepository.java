@@ -19,15 +19,7 @@ public class InMemoryUserRepository implements UserRepository {
 
     private long userIdCounter;
 
-    private final Map<Long, User> registeredUsers = new HashMap<Long, User>(){{
-
-        put(0L, new User(new Email("email"),
-                new Password("password"), new FirstName("firstName"), new LastName("lastName")));
-        put(1L, new User(new Email("email1"),
-                new Password("password1"), new FirstName("firstName1"), new LastName("lastName1")));
-        put(2L, new User(new Email("email2"),
-                new Password("password2"), new FirstName("firstName2"), new LastName("lastName2")));
-    }};
+    private final Map<Long, User> registeredUsers = new HashMap<>();
 
     private final Map<SecurityToken, User> loggedUsers = new HashMap<>();
 
@@ -42,7 +34,7 @@ public class InMemoryUserRepository implements UserRepository {
             log.info("Start creating new user...");
         }
 
-        user.setId(userIdCounter);
+        user.setId(new UserId(userIdCounter));
 
         if (log.isInfoEnabled()) {
             log.info("New user id: " + user.getId());
@@ -60,13 +52,13 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public User findUserById(long userId) {
+    public User findUserById(UserId userId) {
 
         if (log.isInfoEnabled()) {
             log.info("Looking for user with id: " + userId);
         }
 
-        return registeredUsers.get(userId);
+        return registeredUsers.get(userId.getUserId());
     }
 
     @Override
