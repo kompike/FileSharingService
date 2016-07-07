@@ -20,6 +20,7 @@ import java.util.Collection;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 public class FileServiceImplShould {
@@ -125,18 +126,18 @@ public class FileServiceImplShould {
 
     @Test
     public void testIllegalSecurityTokenWhileDownloadingFile()
-            throws UserNotFoundException, UserNotAuthorizedException, IOException {
+            throws UserNotFoundException, IOException {
 
         final SecurityToken token = userAuthenticationService.login(email, password);
 
         final User user = userRepository.findLoggedUserBySecurityToken(token);
 
-        fileService.uploadFile(token, file,
-                new ByteArrayInputStream(new byte[(int) file.getFileSize()]));
-
-        final File fileFromRepository = fileRepository.findAllUserFiles(user).iterator().next();
-
         try {
+
+            fileService.uploadFile(token, file,
+                    new ByteArrayInputStream(new byte[(int) file.getFileSize()]));
+
+            final File fileFromRepository = fileRepository.findAllUserFiles(user).iterator().next();
 
             fileService.downloadFile(fakeToken, fileFromRepository);
 
@@ -145,6 +146,45 @@ public class FileServiceImplShould {
 
             assertEquals("Wrong message for downloading file.",
                     "User must be authorized to download files.", ex.getMessage());
+        }
+
+    }
+
+    @Test
+    public void deleteFile()
+            throws UserNotAuthorizedException, UserNotFoundException, IOException {
+
+        final SecurityToken token =
+                userAuthenticationService.login(email, password);
+
+        fileService.uploadFile(token, file,
+                new ByteArrayInputStream(new byte[(int) file.getFileSize()]));
+
+        fileService.deleteFile(token, file);
+
+        assertNull("File was not deleted.", fileRepository.findFileById(file.getFileId()));
+    }
+
+
+
+    @Test
+    public void testIllegalSecurityTokenWhileDeletingFile()
+            throws UserNotFoundException, IOException {
+
+        final SecurityToken token = userAuthenticationService.login(email, password);
+
+        try {
+
+            fileService.uploadFile(token, file,
+                    new ByteArrayInputStream(new byte[(int) file.getFileSize()]));
+
+            fileService.deleteFile(fakeToken, file);
+
+            fail("UserNotAuthorizedException was not thrown.");
+        } catch (UserNotAuthorizedException ex) {
+
+            assertEquals("Wrong message for deleting file.",
+                    "User must be authorized to delete files.", ex.getMessage());
         }
 
     }
