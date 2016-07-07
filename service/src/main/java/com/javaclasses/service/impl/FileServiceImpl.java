@@ -33,7 +33,7 @@ public class FileServiceImpl implements FileService {
 
         if (user == null) {
 
-            throw new UserNotAuthorizedException("User not authorized.");
+            throw new UserNotAuthorizedException("User must be authorized to upload files.");
         }
 
         fileRepository.createFile(file, user, inputStream);
@@ -57,6 +57,13 @@ public class FileServiceImpl implements FileService {
     public InputStream downloadFile(SecurityToken token, File file)
             throws UserNotAuthorizedException {
 
-        return null;
+        final User user = userRepository.findLoggedUserBySecurityToken(token);
+
+        if (user == null) {
+
+            throw new UserNotAuthorizedException("User must be authorized to download files.");
+        }
+
+        return fileRepository.downloadFile(file);
     }
 }

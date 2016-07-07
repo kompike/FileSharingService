@@ -34,4 +34,11 @@ public interface FileRepository {
      * @return List of all files of given user
      */
     Collection<File> findAllUserFiles(User user);
+
+    /**
+     * Downloads given file content
+     * @param file File to be downloaded
+     * @return Input stream with given file content
+     */
+    InputStream downloadFile(File file);
 }
