@@ -11,10 +11,10 @@ import com.javaclasses.dao.tinytype.Password;
 import com.javaclasses.dao.tinytype.SecurityToken;
 import com.javaclasses.service.impl.FileServiceImpl;
 import com.javaclasses.service.impl.UserAuthenticationServiceImpl;
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
 import java.sql.Date;
 
 import static junit.framework.TestCase.assertEquals;
@@ -42,7 +42,8 @@ public class FileServiceImplShould {
 
         final File file = new File("newFile", 256, new Date(System.currentTimeMillis()), user);
 
-        fileService.uploadFile(token, file, new ByteInputStream());
+        fileService.uploadFile(token, file,
+                new ByteArrayInputStream(new byte[(int) file.getFileSize()]));
 
         final File fileFromRepository = fileRepository.findFileById(file.getFileId());
 
@@ -68,7 +69,8 @@ public class FileServiceImplShould {
 
         try {
 
-            fileService.uploadFile(fakeToken, file, new ByteInputStream());
+            fileService.uploadFile(fakeToken, file,
+                    new ByteArrayInputStream(new byte[(int) file.getFileSize()]));
 
             fail("IllegalSecurityTokenException was not thrown.");
         } catch (IllegalSecurityTokenException ex) {

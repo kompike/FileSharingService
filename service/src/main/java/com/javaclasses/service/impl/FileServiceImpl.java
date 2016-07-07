@@ -35,6 +35,6 @@ public class FileServiceImpl implements FileService {
                     "User with given security token not found", token);
         }
 
-        fileRepository.createFile(token, file);
+        fileRepository.createFile(file, inputStream);
     }
 }

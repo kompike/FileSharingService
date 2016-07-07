@@ -2,10 +2,10 @@ package com.javaclasses.dao.repository.impl;
 
 import com.javaclasses.dao.entity.File;
 import com.javaclasses.dao.repository.FileRepository;
-import com.javaclasses.dao.tinytype.SecurityToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,8 +20,10 @@ public class InMemoryFileRepository implements FileRepository {
 
     private final Map<Long, File> files = new HashMap<>();
 
+    private final Map<File, InputStream> uploadedFilesContent = new HashMap<>();
+
     @Override
-    public void createFile(SecurityToken token, File file) {
+    public void createFile(File file, InputStream inputStream) {
 
         if (log.isInfoEnabled()) {
             log.info("Start adding new file...");
@@ -36,12 +38,19 @@ public class InMemoryFileRepository implements FileRepository {
         files.put(fileIdCounter++, file);
 
         if (log.isInfoEnabled()) {
-            log.info("Files map size is: " + files.size());
+            log.info("Start uploading file content to the storage...");
+        }
+
+        uploadedFilesContent.put(file, inputStream);
+
+        if (log.isInfoEnabled()) {
+            log.info("File content successfully added to the storage.");
         }
 
         if (log.isInfoEnabled()) {
             log.info("New file successfully added.");
         }
+
 
     }
 
