@@ -80,9 +80,17 @@ public class InMemoryFileRepository implements FileRepository {
     @Override
     public Collection<File> findAllUserFiles(User user) {
 
+        if (log.isInfoEnabled()) {
+            log.info("Getting the list of all files in memory...");
+        }
+
         final Collection<File> allAvailableFiles = files.values();
 
         final Collection<File> userFiles = new ArrayList<>();
+
+        if (log.isInfoEnabled()) {
+            log.info("Looking for files of current user...");
+        }
 
         for (File file : allAvailableFiles) {
 
@@ -92,14 +100,56 @@ public class InMemoryFileRepository implements FileRepository {
             }
         }
 
+        if (log.isInfoEnabled()) {
+            log.info("All files of current user found.");
+        }
+
         return userFiles;
     }
 
     @Override
     public InputStream downloadFile(File file) {
 
+        if (log.isInfoEnabled()) {
+            log.info("Start downloading file...");
+        }
+
         final byte[] result = uploadedFilesContent.get(file);
 
-        return new ByteArrayInputStream(result);
+        try {
+            return new ByteArrayInputStream(result);
+        } finally {
+
+            if (log.isInfoEnabled()) {
+                log.info("File successfully downloaded.");
+            }
+
+        }
+    }
+
+    @Override
+    public void deleteFile(long fileID) {
+
+        if (log.isInfoEnabled()) {
+            log.info("Searching for file to be deleted...");
+        }
+
+        final File fileToDelete = files.get(fileID);
+
+        if (log.isInfoEnabled()) {
+            log.info("Removing file from files map...");
+        }
+
+        files.remove(fileID);
+
+        if (log.isInfoEnabled()) {
+            log.info("Removing file's content...");
+        }
+
+        uploadedFilesContent.remove(fileToDelete);
+
+        if (log.isInfoEnabled()) {
+            log.info("File successfully deleted.");
+        }
     }
 }

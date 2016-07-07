@@ -2,7 +2,6 @@ package com.javaclasses.dao.repository;
 
 import com.javaclasses.dao.entity.File;
 import com.javaclasses.dao.entity.User;
-import com.javaclasses.dao.tinytype.SecurityToken;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,4 +40,10 @@ public interface FileRepository {
      * @return Input stream with given file content
      */
     InputStream downloadFile(File file);
+
+    /**
+     * Deletes given file from the database
+     * @param fileId Identifier of file to be deleted
+     */
+    void deleteFile(long fileId);
 }

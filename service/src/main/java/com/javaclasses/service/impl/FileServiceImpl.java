@@ -71,5 +71,13 @@ public class FileServiceImpl implements FileService {
     public void deleteFile(SecurityToken token, File file)
             throws UserNotAuthorizedException {
 
+        final User user = userRepository.findLoggedUserBySecurityToken(token);
+
+        if (user == null) {
+
+            throw new UserNotAuthorizedException("User must be authorized to delete files.");
+        }
+
+        fileRepository.deleteFile(file.getFileId());
     }
 }
