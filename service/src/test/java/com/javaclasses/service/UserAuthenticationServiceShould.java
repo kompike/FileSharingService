@@ -71,7 +71,7 @@ public class UserAuthenticationServiceShould {
                 userAuthenticationService.login(email, password);
 
         assertNotNull("User is not logged in.",
-                userRepository.findLoggedUserBySecurityToken(token));
+                 userRepository.findLoggedUserBySecurityToken(token));
 
         userAuthenticationService.logout(token);
 

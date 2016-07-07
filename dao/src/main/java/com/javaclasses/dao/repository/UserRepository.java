@@ -39,11 +39,11 @@ public interface UserRepository {
     Collection<User> findAllRegisteredUsers();
 
     /**
-     * Add logged user to the database
-     * @param token Unique security identifier of logged user
+     * Add user to the database of authorized users
+     * @param token Unique security identifier of current user
      * @param user Logged user
      */
-    void addLoggedUser(SecurityToken token, User user);
+    void authorizeUser(SecurityToken token, User user);
 
     /**
      * Search for user in database of logged users by security token
@@ -51,4 +51,10 @@ public interface UserRepository {
      * @return User with given security token
      */
     User findLoggedUserBySecurityToken(SecurityToken token);
+
+    /**
+     * Remove current user from authorized users
+     * @param token Unique security identifier of current user
+     */
+    void logoutUser(SecurityToken token);
 }

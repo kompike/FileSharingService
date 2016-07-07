@@ -23,7 +23,7 @@ public class InMemoryUserRepository implements UserRepository {
 
     private final Map<Long, User> registeredUsers = new ConcurrentHashMap<>();
 
-    private final Map<SecurityToken, User> loggedUsers = new ConcurrentHashMap<>();
+    private final Map<SecurityToken, User> authorizedUsers = new ConcurrentHashMap<>();
 
     public InMemoryUserRepository() {
         userIdCounter = registeredUsers.size();
@@ -98,13 +98,13 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public synchronized void addLoggedUser(SecurityToken token, User user) {
+    public synchronized void authorizeUser(SecurityToken token, User user) {
 
         if (log.isInfoEnabled()) {
             log.info("User logged in.");
         }
 
-        loggedUsers.put(token, user);
+        authorizedUsers.put(token, user);
     }
 
     @Override
@@ -114,6 +114,16 @@ public class InMemoryUserRepository implements UserRepository {
             log.info("Looking for user with security token: " + token);
         }
 
-        return loggedUsers.get(token);
+        return authorizedUsers.get(token);
+    }
+
+    @Override
+    public synchronized void logoutUser(SecurityToken token) {
+
+        if (log.isInfoEnabled()) {
+            log.info("User is logging out...");
+        }
+
+        authorizedUsers.remove(token);
     }
 }

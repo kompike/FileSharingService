@@ -56,7 +56,7 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 
         final SecurityToken token = new SecurityToken(user.hashCode());
 
-        userRepository.addLoggedUser(token, user);
+        userRepository.authorizeUser(token, user);
 
         return token;
     }
@@ -64,5 +64,8 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     @Override
     public void logout(SecurityToken token) {
 
+        checkNotNull(token, "Security token must not be null.");
+
+        userRepository.logoutUser(token);
     }
 }
