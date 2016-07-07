@@ -2,13 +2,15 @@ package com.javaclasses.dao.repository.impl;
 
 import com.javaclasses.dao.entity.User;
 import com.javaclasses.dao.repository.UserRepository;
-import com.javaclasses.dao.tinytype.*;
+import com.javaclasses.dao.tinytype.Email;
+import com.javaclasses.dao.tinytype.SecurityToken;
+import com.javaclasses.dao.tinytype.UserId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Implementation of {@link UserRepository} interface for in memory data
@@ -19,9 +21,9 @@ public class InMemoryUserRepository implements UserRepository {
 
     private volatile long userIdCounter;
 
-    private final Map<Long, User> registeredUsers = new HashMap<>();
+    private final Map<Long, User> registeredUsers = new ConcurrentHashMap<>();
 
-    private final Map<SecurityToken, User> loggedUsers = new HashMap<>();
+    private final Map<SecurityToken, User> loggedUsers = new ConcurrentHashMap<>();
 
     public InMemoryUserRepository() {
         userIdCounter = registeredUsers.size();
@@ -52,7 +54,7 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public synchronized User findUserById(UserId userId) {
+    public User findUserById(UserId userId) {
 
         if (log.isInfoEnabled()) {
             log.info("Looking for user with id: " + userId);
@@ -62,7 +64,7 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public synchronized User findUserByEmail(Email email) {
+    public User findUserByEmail(Email email) {
 
         final Collection<User> registeredUsers = findAllRegisteredUsers();
 
@@ -86,7 +88,7 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public synchronized Collection<User> findAllRegisteredUsers() {
+    public Collection<User> findAllRegisteredUsers() {
 
         if (log.isInfoEnabled()) {
             log.info("Getting the list of all registered users.");
@@ -106,7 +108,7 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public synchronized User findLoggedUserBySecurityToken(SecurityToken token) {
+    public User findLoggedUserBySecurityToken(SecurityToken token) {
 
         if (log.isInfoEnabled()) {
             log.info("Looking for user with security token: " + token);

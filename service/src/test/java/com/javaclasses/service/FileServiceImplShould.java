@@ -29,7 +29,7 @@ public class FileServiceImplShould {
     private final File file = new File("newFile", new FileSize(256));
 
     private final InputStream fileContent =
-            new ByteArrayInputStream(new byte[(int) file.getFileSize().getSize()]);
+            new ByteArrayInputStream(new byte[256]);
 
     private final SecurityToken fakeToken = new SecurityToken(11);
 

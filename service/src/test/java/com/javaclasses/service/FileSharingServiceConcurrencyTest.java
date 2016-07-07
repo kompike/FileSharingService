@@ -19,7 +19,7 @@ import java.util.concurrent.*;
 
 import static org.junit.Assert.assertEquals;
 
-public class FileSharingServiceMultithreadingTest {
+public class FileSharingServiceConcurrencyTest {
 
     private final FileRepository fileRepository = new InMemoryFileRepository();
     private final UserRepository userRepository = new InMemoryUserRepository();
@@ -33,10 +33,8 @@ public class FileSharingServiceMultithreadingTest {
     private final FileService fileService =
             new FileServiceImpl(fileRepository, userRepository);
 
-
-
     @Test
-    public void testFileSharingServiceMultithreading()
+    public void testExecutionInMultipleTreads()
             throws InterruptedException, ExecutionException {
 
         final int threadPoolSize = 50;
@@ -49,18 +47,21 @@ public class FileSharingServiceMultithreadingTest {
 
         for (int i = 0; i < threadPoolSize; i++) {
 
-            final int number = i;
+            final int currentIndex = i;
 
             final Future<User> future = executorService.submit(() -> {
 
                 startLatch.countDown();
                 startLatch.await();
 
+                final Email email = new Email("email" + currentIndex);
+
                 final User user = new User(
-                        new Email("email" + number), new Password("password" + number),
-                        new FirstName("firstName" + number), new LastName("lastName" + number));
+                        email, new Password("password" + currentIndex),
+                        new FirstName("firstName" + currentIndex), new LastName("lastName" + currentIndex));
 
                 try {
+
                     userRegistrationService.registerNewUser(user);
                 } catch (UserAlreadyExistsException e) {
                     e.getMessage();
@@ -68,41 +69,49 @@ public class FileSharingServiceMultithreadingTest {
 
                 final User userById = userRepository.findUserById(user.getId());
 
-                assertEquals("", user, userById);
+                assertEquals("Users with given ids must be equal: " +
+                        user.getId() + " and " + userById.getId(), user, userById);
 
                 final SecurityToken token =
-                        userAuthenticationService.login(new Email("email" + number),
-                                new Password("password" + number));
+                        userAuthenticationService.login(email,
+                                new Password("password" + currentIndex));
 
-                assertEquals("", "email" + number,
+                assertEquals("Emails must be equal", "email" + currentIndex,
                         userRepository.findLoggedUserBySecurityToken(token).getEmail().getEmail());
 
-                final File file = new File("fileName" + number, new FileSize(256));
+                final File fileToBeAdded =
+                        new File("fileName" + currentIndex, new FileSize(256));
 
-                fileService.uploadFile(token, file,
-                        new ByteArrayInputStream(new byte[(int) file.getFileSize().getSize()]));
+                final ByteArrayInputStream fileContent =
+                        new ByteArrayInputStream(new byte[256]);
 
-                final File fileFromRepository = fileRepository.findFileById(file.getFileId());
+                fileService.uploadFile(token, fileToBeAdded, fileContent);
 
-                assertEquals("Files must be equals.", file, fileFromRepository);
+                final File fileFromRepository =
+                        fileRepository.findFileById(fileToBeAdded.getFileId());
 
-                final File secondFile = new File("fileName" + number + 1, new FileSize(256));
+                assertEquals("Files must be equals.", fileToBeAdded, fileFromRepository);
 
-                fileService.uploadFile(token, secondFile,
-                        new ByteArrayInputStream(new byte[(int) file.getFileSize().getSize()]));
+                final File secondFileToBeAdded =
+                        new File("fileName" + currentIndex, new FileSize(256));
 
-                assertEquals("Files must be equals.", 2, fileRepository.findAllUserFiles(user).size());
+                fileService.uploadFile(token, secondFileToBeAdded, fileContent);
 
-                final File thirdFile = new File("fileName" + number + 1, new FileSize(256));
+                assertEquals("User must have 2 files.", 2,
+                        fileRepository.findAllUserFiles(user).size());
 
-                fileService.uploadFile(token, thirdFile,
-                        new ByteArrayInputStream(new byte[(int) file.getFileSize().getSize()]));
+                final File thirdFileToBeAdded =
+                        new File("fileName" + currentIndex, new FileSize(256));
 
-                assertEquals("Files must be equals.", 3, fileRepository.findAllUserFiles(user).size());
+                fileService.uploadFile(token, thirdFileToBeAdded, fileContent);
 
-                fileService.deleteFile(token, secondFile.getFileId());
+                assertEquals("User must have 3 files.", 3,
+                        fileRepository.findAllUserFiles(user).size());
 
-                assertEquals("Files must be equals.", 2, fileRepository.findAllUserFiles(user).size());
+                fileService.deleteFile(token, secondFileToBeAdded.getFileId());
+
+                assertEquals("User must have 2 files.", 2,
+                        fileRepository.findAllUserFiles(user).size());
 
                 return user;
             });
@@ -114,5 +123,8 @@ public class FileSharingServiceMultithreadingTest {
 
             future.get();
         }
+
+        assertEquals("Users number must be " + threadPoolSize, threadPoolSize,
+                userRepository.findAllRegisteredUsers().size());
     }
 }

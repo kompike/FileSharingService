@@ -14,8 +14,8 @@ import java.io.InputStream;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Implementation of {@link FileRepository} interface for in memory data
@@ -26,9 +26,13 @@ public class InMemoryFileRepository implements FileRepository {
 
     private volatile long fileIdCounter;
 
-    private final Map<Long, File> files = new HashMap<>();
+    private final Map<Long, File> files = new ConcurrentHashMap<>();
 
-    private final Map<File, byte[]> uploadedFilesContent = new HashMap<>();
+    private final Map<File, byte[]> uploadedFilesContent = new ConcurrentHashMap<>();
+
+    public InMemoryFileRepository() {
+        fileIdCounter = files.size();
+    }
 
     @Override
     public synchronized void createFile(File file, User user, InputStream inputStream)
@@ -69,7 +73,7 @@ public class InMemoryFileRepository implements FileRepository {
     }
 
     @Override
-    public synchronized File findFileById(FileId fileId) {
+    public File findFileById(FileId fileId) {
 
         if (log.isInfoEnabled()) {
             log.info("Looking for file with id: " + fileId);
@@ -79,7 +83,7 @@ public class InMemoryFileRepository implements FileRepository {
     }
 
     @Override
-    public synchronized Collection<File> findAllUserFiles(User user) {
+    public Collection<File> findAllUserFiles(User user) {
 
         if (log.isInfoEnabled()) {
             log.info("Getting the list of all files in memory...");
