@@ -9,6 +9,7 @@ import com.javaclasses.service.FileService;
 import com.javaclasses.service.IllegalSecurityTokenException;
 
 import java.io.InputStream;
+import java.util.Collection;
 
 /**
  * Implementation of {@link FileService} interface
@@ -36,5 +37,10 @@ public class FileServiceImpl implements FileService {
         }
 
         fileRepository.createFile(file, inputStream);
+    }
+
+    @Override
+    public Collection<File> findAllUserFiles(SecurityToken token) {
+        return null;
     }
 }

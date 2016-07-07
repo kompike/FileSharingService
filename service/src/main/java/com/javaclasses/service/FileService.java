@@ -4,6 +4,7 @@ import com.javaclasses.dao.entity.File;
 import com.javaclasses.dao.tinytype.SecurityToken;
 
 import java.io.InputStream;
+import java.util.Collection;
 
 /**
  * Basic interface for file management
@@ -19,4 +20,11 @@ public interface FileService {
      */
     void uploadFile(SecurityToken token, File file, InputStream inputStream)
             throws IllegalSecurityTokenException;
+
+    /**
+     * Looking for all files of current user
+     * @param token Security token of current user
+     * @return List of all files of current user
+     */
+    Collection<File> findAllUserFiles(SecurityToken token);
 }
